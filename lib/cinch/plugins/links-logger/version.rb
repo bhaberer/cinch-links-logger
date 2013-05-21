@@ -1,6 +1,6 @@
 module Cinch
-  module Links
-    module Logger
+  module Plugins
+    class LinksLogger
       VERSION = "0.0.1"
     end
   end
