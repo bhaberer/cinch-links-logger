@@ -1,6 +1,6 @@
-# Cinch::Links::Logger
+# Cinch::Plugins::LinksLogger
 
-TODO: Write a gem description
+Cinch Plugin for logging links and printing titles / stats for linked urls.
 
 ## Installation
 
@@ -18,7 +18,35 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+You will need to add the Plugin and config to your list first;
+
+    @bot = Cinch::Bot.new do
+      configure do |c|
+        c.plugins.plugins = [Cinch::Plugins::LinksLogger]
+        c.plugins.options[Cinch::Plugins::LinksTumblr] = { :stats     => true,
+                                                           :titles    => true,
+                                                           :filename  => 'yaml/links.yml',
+                                                           :whitelist => nil,
+                                                           :blacklist => nil }
+      end
+    end
+
+The configuration variables are all optional, what's listed is their defaults
+
+:titles (boolean) - Setting this to true will print the URL's title to the channel.
+
+:stats (boolena) - Setting this to true will print the name of the user who first linked
+                   the URL, if applicable.
+
+:blacklist - An array of domains that you want to ignore, e.g.
+
+    :blackist => ['twitter', 'reddit']
+
+:whitelist - An array of domains that you want limit title printing and logging to, e.g.
+
+    :whitelist => ['youtube']
+
+:filename - the file to store previously linked urls.
 
 ## Contributing
 
