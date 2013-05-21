@@ -35,7 +35,7 @@ The configuration variables are all optional, what's listed are their defaults
 
 :titles (boolean) - Setting this to true will print the URL's title to the channel.
 
-:stats (boolena) - Setting this to true will print the name of the user who first linked
+:stats (boolean) - Setting this to true will print the name of the user who first linked
                    the URL, if applicable.
 
 :blacklist - An array of domains that you want to ignore, e.g.
