@@ -31,7 +31,7 @@ You will need to add the Plugin and config to your list first;
       end
     end
 
-The configuration variables are all optional, what's listed is their defaults
+The configuration variables are all optional, what's listed are their defaults
 
 :titles (boolean) - Setting this to true will print the URL's title to the channel.
 
