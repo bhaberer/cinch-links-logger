@@ -29,30 +29,13 @@ You will need to add the Plugin and config to your list first;
     @bot = Cinch::Bot.new do
       configure do |c|
         c.plugins.plugins = [Cinch::Plugins::LinksLogger]
-        c.plugins.options[Cinch::Plugins::LinksTumblr] = { :stats     => true,
-                                                           :titles    => true,
-                                                           :filename  => 'yaml/links.yml',
-                                                           :whitelist => nil,
-                                                           :blacklist => nil }
+        # If you need to specify an alternate path
+        c.plugins.options[Cinch::Plugins::LinksTumblr] = { :filename  => 'yaml/links.yml' }
       end
     end
 
-The configuration variables are all optional, what's listed are their defaults
-
-:titles (boolean) - Setting this to true will print the URL's title to the channel.
-
-:stats (boolean) - Setting this to true will print the name of the user who first linked
-                   the URL, if applicable.
-
-:blacklist - An array of domains that you want to ignore, e.g.
-
-    :blackist => ['twitter', 'reddit']
-
-:whitelist - An array of domains that you want limit title printing and logging to, e.g.
-
-    :whitelist => ['youtube']
-
-:filename - the file to store previously linked urls.
+Links in the channel will be captured and users who type `!links` in channel will receive a
+list of the last 10 links (this will be configurable in the future).
 
 ## Contributing
 

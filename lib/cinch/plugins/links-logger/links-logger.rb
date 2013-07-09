@@ -3,11 +3,10 @@ require 'open-uri'
 require 'cinch'
 require 'cinch/toolbox'
 require 'cinch-storage'
-require 'time-lord'
 
 class Link < Struct.new(:nick, :title, :count, :short_url, :time)
   def to_yaml
-    {nick: nick, title: title, count: count, short_url: short_url, time: time }
+    { nick: nick, title: title, count: count, short_url: short_url, time: time }
   end
 end
 
@@ -40,8 +39,6 @@ module Cinch::Plugins
         @storage.data[m.channel.name] ||= Hash.new
         @link = get_or_create_link(m, url)
       end
-      # Save if we matched urls.
-      @storage.synced_save(@bot) if urls
     end
 
     private
@@ -49,23 +46,19 @@ module Cinch::Plugins
     def get_or_create_link(m, url)
       channel = m.channel.name
       # If the link was posted already, get the old info instead of getting new
-      if @storage.data[channel].key?(url)
-        @storage.data[channel][url][:count] += 1
-        link = @storage.data[channel][url]
-      else
-        link = Link.new(m.user.nick,
-                        Cinch::Toolbox.get_page_title(url),
-                        1, Cinch::Toolbox.shorten(url), Time.now)
-        @storage.data[channel][url] = link
-      end
-      return link
+      @storage.data[channel][url] ||= Link.new(m.user.nick,
+                                               Cinch::Toolbox.get_page_title(url),
+                                               0,
+                                               Cinch::Toolbox.shorten(url),
+                                               Time.now)
+      @storage.data[channel][url].count += 1
+      @storage.synced_save(@bot)
+      return @storage.data[channel][url]
     end
 
     def get_recent_links(channel)
       message = ["Recent Links in #{channel}"]
       links = @storage.data[channel].values.reverse[0..9]
-      puts links.to_s
-      puts message
       links.each_with_index do |link|
         message << if link.title.nil?
                      Cinch::Toolbox.expand(link.short_url)

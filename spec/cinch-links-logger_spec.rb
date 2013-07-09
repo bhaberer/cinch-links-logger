@@ -14,6 +14,14 @@ describe Cinch::Plugins::LinksLogger do
       should == 'http://github.com'
   end
 
+  it 'should capture links count' do
+    15.times { get_replies(make_message(@bot, 'http://github.com', { channel: '#foo' })) }
+    links = @bot.plugins.first.storage.data['#foo']
+    puts "\n\n#{links}\n\n"
+    links.length.should == 1
+    links.values.first.count.should == 15
+  end
+
   it 'should not capture malformed URLS' do
     get_replies(make_message(@bot, 'htp://github.com', { channel: '#foo', nick: 'bar' }))
     get_replies(make_message(@bot, 'http/github.com', { channel: '#foo', nick: 'bar' }))
