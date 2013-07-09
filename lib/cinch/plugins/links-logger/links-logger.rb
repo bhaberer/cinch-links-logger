@@ -26,21 +26,7 @@ module Cinch::Plugins
     def execute(m)
       return if Cinch::Toolbox.sent_via_private_message?(m)
 
-      message = []
-
-      message << "Recent Links in #{m.channel.name}"
-      last = @storage.data[m.channel.name].values
-      last.sort! {|a,b| b.time <=> a.time }
-      last[0,9].each_with_index do |link, i|
-        msg = "#{i + 1} - "
-        if link.title.nil?
-          msg << Cinch::Toolbox.expand(link.short_url)
-        else
-          msg << "#{link.short_url} ∴ #{link.title}"
-        end
-        message << msg
-      end
-      message.each { |m| m.user.send m }
+      get_recent_links(m.channel.name).each { |m| m.user.send m }
     end
 
     def listen(m)
@@ -72,6 +58,19 @@ module Cinch::Plugins
     end
 
     private
+
+    def get_recent_links(channel)
+      message = []
+      message << "Recent Links in #{m.channel.name}"
+      @storage.data[m.channel.name].values[-10,-1].each_with_index do |link, i|
+        message <<  if link.title.nil?
+                      "#{i + 1} - #{Cinch::Toolbox.expand(link.short_url)}"
+                    else
+                      "#{i + 1} - #{link.short_url} ∴ #{link.title}"
+                    end
+      end
+      return message
+    end
 
     def whitelisted?(url)
       return true unless config[:whitelist]
