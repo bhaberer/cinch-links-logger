@@ -1,5 +1,11 @@
 # Cinch::Plugins::LinksLogger
 
+[![Gem Version](https://badge.fury.io/rb/cinch-links-logger.png)](http://badge.fury.io/rb/cinch-links-logger)
+[![Dependency Status](https://gemnasium.com/bhaberer/cinch-links-logger.png)](https://gemnasium.com/bhaberer/cinch-links-logger)
+[![Build Status](https://travis-ci.org/bhaberer/cinch-links-logger.png?branch=master)](https://travis-ci.org/bhaberer/cinch-links-logger)
+[![Coverage Status](https://coveralls.io/repos/bhaberer/cinch-links-logger/badge.png?branch=master)](https://coveralls.io/r/bhaberer/cinch-links-logger?branch=master)
+[![Code Climate](https://codeclimate.com/github/bhaberer/cinch-links-logger.png)](https://codeclimate.com/github/bhaberer/cinch-links-logger)
+
 Cinch Plugin for logging links and printing titles / stats for linked urls.
 
 ## Installation
