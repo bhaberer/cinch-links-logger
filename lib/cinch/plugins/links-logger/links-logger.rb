@@ -5,9 +5,16 @@ require 'cinch/toolbox'
 require 'cinch-storage'
 require 'time-lord'
 
+class Link < Struct.new(:nick, :title, :count, :short_url, :time)
+  def to_yaml
+    {nick: nick, title: title, count: count, short_url: short_url, time: time }
+  end
+end
+
 module Cinch::Plugins
   class LinksLogger
     include Cinch::Plugin
+    attr_reader :storage
 
     listen_to :channel
 
@@ -21,69 +28,52 @@ module Cinch::Plugins
       @storage.data ||= Hash.new
     end
 
-    Link < Struct.new(:nick, :title, :count, :short_url, :time)
-
     def execute(m)
       return if Cinch::Toolbox.sent_via_private_message?(m)
-
-      get_recent_links(m.channel.name).each { |m| m.user.send m }
+      get_recent_links(m.channel.name).each { |line| m.user.send line }
     end
 
     def listen(m)
-      channel = m.channel.name
-
       urls = URI.extract(m.message, ["http", "https"])
       urls.each do |url|
         # Ensure we have a Channel Object in the History to dump links into.
-        @storage.data[channel] ||= Hash.new
-
-        # Make sure it conforms to white/black lists before bothering.
-        if whitelisted?(url) && !blacklisted?(url)
-          # If the link was posted already, get the old info instead of getting new
-          if @storage.data[channel].key?(url)
-            @storage.data[channel][url][:count] += 1
-            @link = @storage.data[channel][url]
-          else
-            @storage.data[channel][url] = Link.new(m.user.nick,
-                                                   Cinch::Toolbox.get_page_title(url),
-                                                   1, Cinch::Toolbox.shorten(url), Time.now)
-          end
-        else
-          debug "#{blacklisted?(url) ? 'Blacklisted URL was not logged' : 'Domain not Whitelisted'} #{url}"
-          return
-        end
+        @storage.data[m.channel.name] ||= Hash.new
+        @link = get_or_create_link(m, url)
       end
       # Save if we matched urls.
-      @storage.synced_save if urls
+      @storage.synced_save(@bot) if urls
     end
 
     private
 
+    def get_or_create_link(m, url)
+      channel = m.channel.name
+      # If the link was posted already, get the old info instead of getting new
+      if @storage.data[channel].key?(url)
+        @storage.data[channel][url][:count] += 1
+        link = @storage.data[channel][url]
+      else
+        link = Link.new(m.user.nick,
+                        Cinch::Toolbox.get_page_title(url),
+                        1, Cinch::Toolbox.shorten(url), Time.now)
+        @storage.data[channel][url] = link
+      end
+      return link
+    end
+
     def get_recent_links(channel)
-      message = []
-      message << "Recent Links in #{m.channel.name}"
-      @storage.data[m.channel.name].values[-10,-1].each_with_index do |link, i|
-        message <<  if link.title.nil?
-                      "#{i + 1} - #{Cinch::Toolbox.expand(link.short_url)}"
-                    else
-                      "#{i + 1} - #{link.short_url} ∴ #{link.title}"
-                    end
+      message = ["Recent Links in #{channel}"]
+      links = @storage.data[channel].values.reverse[0..9]
+      puts links.to_s
+      puts message
+      links.each_with_index do |link|
+        message << if link.title.nil?
+                     Cinch::Toolbox.expand(link.short_url)
+                   else
+                     "#{link.short_url} - #{link.title}"
+                   end
       end
       return message
-    end
-
-    def whitelisted?(url)
-      return true unless config[:whitelist]
-      debug "Checking Whitelist! #{config[:whitelist]} url: #{url}"
-      return true if url.match(Regexp.new("https:?\/\/.*\.?#{config[:whitelist].join('|')}\."))
-      false
-    end
-
-    def blacklisted?(url)
-      return false unless config[:blacklist]
-      debug "Checking Blacklist! #{config[:blacklist]} url: #{url}"
-      return true if url.match(Regexp.new("https:?\/\/.*\.?#{config[:blacklist].join('|')}\."))
-      false
     end
   end
 end

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'cinch-test', :path => '~/src/cinch-test'
+gem 'cinch-toolbox', :path => '~/src/cinch-toolbox'
 # Specify your gem's dependencies in cinch-links-logger.gemspec
 gemspec
