@@ -4,18 +4,19 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'cinch/plugins/links-logger/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "cinch-links-logger"
+  gem.name          = 'cinch-links-logger'
   gem.version       = Cinch::Plugins::LinksLogger::VERSION
-  gem.authors       = ["Brian Haberer"]
-  gem.email         = ["bhaberer@gmail.com"]
+  gem.authors       = ['Brian Haberer']
+  gem.email         = ['bhaberer@gmail.com']
   gem.description   = %q{Cinch Plugin to track links in the channel}
   gem.summary       = %q{Cinch Plugin for links logging}
-  gem.homepage      = "https://github.com/bhaberer/cinch-links-logger"
+  gem.homepage      = 'https://github.com/bhaberer/cinch-links-logger'
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ["lib"]
+  gem.require_paths = ['lib']
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
