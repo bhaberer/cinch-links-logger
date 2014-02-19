@@ -2,7 +2,7 @@
 require 'open-uri'
 require 'cinch'
 require 'cinch/toolbox'
-require 'cinch-storage'
+require 'cinch/storage'
 
 module Cinch::Plugins
   # Cinch Plugin to track links
@@ -18,7 +18,7 @@ module Cinch::Plugins
 
     def initialize(*args)
       super
-      @storage = CinchStorage.new(config[:filename] || 'yaml/links.yaml')
+      @storage = Cinch::Storage.new(config[:filename] || 'yaml/links.yaml')
       @storage.data ||= {}
     end
 
