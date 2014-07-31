@@ -10,29 +10,29 @@ describe Cinch::Plugins::LinksLogger do
 
   it 'should capture links' do
     get_replies(make_message(@bot, 'http://github.com', { channel: '#foo', nick: 'bar' }))
-    @bot.plugins.first.storage.data['#foo'].keys.first.
-      should == 'http://github.com'
+    expect(@bot.plugins.first.storage.data['#foo'].keys.first)
+      .to eq('http://github.com')
   end
 
   it 'should capture links count' do
     15.times { get_replies(make_message(@bot, 'http://github.com', { channel: '#foo' })) }
     links = @bot.plugins.first.storage.data['#foo']
-    puts "\n\n#{links}\n\n"
-    links.length.should == 1
-    links.values.first.count.should == 15
+    expect(links.length).to eq(1)
+    expect(links.values.first.count).to eq(15)
   end
 
   it 'should not capture malformed URLS' do
     get_replies(make_message(@bot, 'htp://github.com', { channel: '#foo', nick: 'bar' }))
     get_replies(make_message(@bot, 'http/github.com', { channel: '#foo', nick: 'bar' }))
-    @bot.plugins.first.storage.data['#foo'].
-      should be_nil
+    expect(@bot.plugins.first.storage.data['#foo'])
+      .to be_nil
   end
 
   it 'should allow users to get a list of recently linked URLS' do
     get_replies(make_message(@bot, 'http://github.com', { channel: '#foo', nick: 'bar' }))
     replies = get_replies(make_message(@bot, '!links', { channel: '#foo', nick: 'test' }))
-    replies.first.text.should == 'Recent Links in #foo'
-    replies.last.text.should == 'http://github.com - GitHub · Build software better, together.'
+    expect(replies.first.text).to eq('Recent Links in #foo')
+    expect(replies.last.text)
+      .to eq('http://github.com - GitHub · Build software better, together.')
   end
 end
